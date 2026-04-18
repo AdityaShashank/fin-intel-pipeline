@@ -1,1 +1,65 @@
-Financial Signal Intelligence (FSI)Autonomous MLOps Pipeline | Real-time Market Sentiment | Scalable ArchitectureFSI is a production-grade intelligence system designed to bridge the gap between raw financial news and actionable market signals. Unlike static notebooks, this is a self-healing, automated pipeline built to serve real-time insights to a high-concurrency user base.3. Key Differentiators (What makes you "Senior")Recruiters look for specific "buzzwords" that prove you understand the complexity of the job. Include these as a bulleted list:Production-Ready ETL: Idempotent ingestion logic with Pydantic validation to ensure 100% data integrity.Domain-Specific NLP: Utilizes FinBERT for nuanced financial sentiment extraction, outperforming general-purpose models in market contexts.High-Concurrency Backend: Optimized for 100+ users using Supabase Realtime (WebSockets) and connection pooling.Autonomous Orchestration: Fully automated via Prefect and GitHub Actions, featuring self-monitoring and graceful API degradation.Statistical Anomaly Detection: Real-time Z-score analysis to filter market noise and highlight high-impact sentiment shifts.4. The Tech Stack (The "Toolkit")Use icons or a clean table to show off your modern stack:LayerTechnologyLanguagePython 3.12AI / NLPFinBERT, HuggingFace, Groq (Llama 3.3 70B)DatabaseSupabase (PostgreSQL) + PgVectorOrchestrationPrefect, GitHub ActionsAPI / UIFastAPI, StreamlitValidationPydantic, Pytest
+# 📈 Financial Signal Intelligence (FSI)
+### Autonomous MLOps Pipeline | Real-time Market Sentiment | Scalable Architecture
+
+[![Pipeline Status](https://github.com/YOUR_USERNAME/fin-intel-pipeline/actions/workflows/main.yml/badge.svg)](https://github.com/YOUR_USERNAME/fin-intel-pipeline/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/)
+
+FSI is a production-grade intelligence system designed to bridge the gap between raw financial news and actionable market signals. Built for high-concurrency (100+ users), this autonomous pipeline ingests, analyzes, and broadcasts market-moving insights using domain-specific AI.
+
+---
+
+## 🏗️ System Architecture
+
+
+
+The system is designed with a **Producer-Consumer** architecture to ensure scalability:
+1. **The Producer:** An idempotent ingestion engine (Python/Pydantic) that scrapes financial news.
+2. **The Brain:** A domain-specific NLP layer using **FinBERT** for sentiment and **Groq (Llama 3.3)** for narrative summarization.
+3. **The Warehouse:** A scalable **PostgreSQL (Supabase)** instance with connection pooling for 100+ users.
+4. **The Broadcaster:** Real-time data delivery via **WebSockets** for zero-latency updates.
+
+---
+
+## 🌟 Key Engineering Features
+
+* **High-Concurrency Design:** Optimized to handle 100+ concurrent users using **Supavisor connection pooling**, preventing database bottlenecks during peak market hours.
+* **Domain-Specific NLP:** Leverages **FinBERT**, a model pre-trained on financial corpora, ensuring accurate sentiment extraction where general models (like DistilBERT) fail.
+* **Self-Healing Pipeline:** Orchestrated via **Prefect** and **GitHub Actions** with automated retries, exponential backoff for API rate limits, and graceful degradation.
+* **Statistical Anomaly Detection:** Implements rolling **Z-score analysis** to filter out market noise and highlight statistically significant sentiment shifts.
+* **Data Integrity First:** Strict schema enforcement using **Pydantic** models to ensure the "Source of Truth" remains unpolluted by malformed API responses.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer               | Technology                                                                 |
+|---------------------|----------------------------------------------------------------------------|
+| **Language** | Python 3.12                                                                |
+| **AI / NLP** | FinBERT (HuggingFace), Groq API (Llama 3.3 70B)                           |
+| **Database** | Supabase (PostgreSQL) + PgVector                                          |
+| **Orchestration** | Prefect, GitHub Actions                                                    |
+| **API / Backend** | FastAPI, Pydantic                                                          |
+| **Frontend** | Streamlit (Real-time Dashboard)                                            |
+
+---
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+* Python 3.12+
+* Supabase Account
+* API Keys for: Alpha Vantage, Groq
+
+### 2. Installation
+```bash
+# Clone the repository
+git clone [https://github.com/YOUR_USERNAME/fin-intel-pipeline.git](https://github.com/YOUR_USERNAME/fin-intel-pipeline.git)
+cd fin-intel-pipeline
+
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
