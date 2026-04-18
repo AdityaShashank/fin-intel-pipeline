@@ -91,15 +91,3 @@ Distributed under the MIT License.
 
 **Built by Aditya Shashank Chinta** | [LinkedIn](https://www.linkedin.com/in/aditya-shashank/)
 ```
-
----
-
-### What to do now:
-1.  **Paste this into your README.md.**
-2.  **Replace the placeholders:** Specifically `YOUR_USERNAME`, `YOUR_LINKEDIN_URL`, and eventually the images.
-3.  **Commit and Push:**
-    ```bash
-    git add README.md
-    git commit -m "docs: implement high-concurrency architecture readme"
-    git push origin main
-    ```
