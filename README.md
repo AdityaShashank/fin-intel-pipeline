@@ -1,65 +1,44 @@
 # 📈 Financial Signal Intelligence (FSI)
-### Autonomous MLOps Pipeline | Real-time Market Sentiment | Scalable Architecture
+### Autonomous MLOps Pipeline | Real-Time Market Sentiment | FinBERT-Powered Analytics
 
 [![Pipeline Status](https://github.com/YOUR_USERNAME/fin-intel-pipeline/actions/workflows/main.yml/badge.svg)](https://github.com/YOUR_USERNAME/fin-intel-pipeline/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/)
+[![Database: Supabase](https://img.shields.io/badge/DB-Supabase%20(Postgres)-green)](https://supabase.com/)
 
-FSI is a production-grade intelligence system designed to bridge the gap between raw financial news and actionable market signals. Built for high-concurrency (100+ users), this autonomous pipeline ingests, analyzes, and broadcasts market-moving insights using domain-specific AI.
+FSI is a production-grade intelligence system designed to handle **100+ concurrent users**. It transforms raw, fragmented financial news into actionable market signals by combining domain-specific NLP with a scalable, event-driven architecture.
 
 ---
 
 ## 🏗️ System Architecture
 
 
-
-The system is designed with a **Producer-Consumer** architecture to ensure scalability:
-1. **The Producer:** An idempotent ingestion engine (Python/Pydantic) that scrapes financial news.
-2. **The Brain:** A domain-specific NLP layer using **FinBERT** for sentiment and **Groq (Llama 3.3)** for narrative summarization.
-3. **The Warehouse:** A scalable **PostgreSQL (Supabase)** instance with connection pooling for 100+ users.
-4. **The Broadcaster:** Real-time data delivery via **WebSockets** for zero-latency updates.
-
----
-
-## 🌟 Key Engineering Features
-
-* **High-Concurrency Design:** Optimized to handle 100+ concurrent users using **Supavisor connection pooling**, preventing database bottlenecks during peak market hours.
-* **Domain-Specific NLP:** Leverages **FinBERT**, a model pre-trained on financial corpora, ensuring accurate sentiment extraction where general models (like DistilBERT) fail.
-* **Self-Healing Pipeline:** Orchestrated via **Prefect** and **GitHub Actions** with automated retries, exponential backoff for API rate limits, and graceful degradation.
-* **Statistical Anomaly Detection:** Implements rolling **Z-score analysis** to filter out market noise and highlight statistically significant sentiment shifts.
-* **Data Integrity First:** Strict schema enforcement using **Pydantic** models to ensure the "Source of Truth" remains unpolluted by malformed API responses.
+The system follows a **Producer-Consumer** pattern optimized for high-concurrency:
+* **The Producer:** Idempotent ingestion engine fetching data from AlphaVantage and yfinance.
+* **The Brain:** Dual-stage NLP using **FinBERT** for sentiment extraction and **Groq (Llama 3.3 70B)** for narrative reasoning.
+* **The Warehouse:** **PostgreSQL (Supabase)** with **Supavisor connection pooling** to prevent bottlenecks for 100+ users.
+* **The Broadcaster:** Real-time signal delivery via **WebSockets** for zero-latency UI updates.
 
 ---
 
-## 🛠️ Tech Stack
+## 🌟 Key Engineering Decisions
 
-| Layer               | Technology                                                                 |
-|---------------------|----------------------------------------------------------------------------|
-| **Language** | Python 3.12                                                                |
-| **AI / NLP** | FinBERT (HuggingFace), Groq API (Llama 3.3 70B)                           |
-| **Database** | Supabase (PostgreSQL) + PgVector                                          |
-| **Orchestration** | Prefect, GitHub Actions                                                    |
-| **API / Backend** | FastAPI, Pydantic                                                          |
-| **Frontend** | Streamlit (Real-time Dashboard)                                            |
+* **Scalability over Simplicity:** Switched from standard SQLite to **PostgreSQL with Connection Pooling**. This allows the system to handle simultaneous read/write operations from 100+ users without database locks.
+* **FinBERT vs. DistilBERT:** Leverages a model pre-trained on financial corpora. FinBERT correctly identifies "Earnings missed estimates" as *bearish*, whereas general models often misinterpret the context.
+* **MD5 Deduplication:** Implements a hashing logic (Ticker + Headline) to ensure **idempotency**. Re-running the pipeline never creates duplicate records, keeping the "Source of Truth" clean.
+* **Statistical Anomaly Detection:** Uses rolling **Z-score analysis** to filter market noise, triggering alerts only when sentiment shifts are statistically significant (> 2σ).
+* **Graceful Degradation:** The pipeline handles NewsAPI rate limits (426 handling) and Reddit JSON fallbacks autonomously without crashing the main thread.
 
 ---
 
-## 🚀 Getting Started
-
-### 1. Prerequisites
-* Python 3.12+
-* Supabase Account
-* API Keys for: Alpha Vantage, Groq
-
-### 2. Installation
-```bash
-# Clone the repository
-git clone [https://github.com/YOUR_USERNAME/fin-intel-pipeline.git](https://github.com/YOUR_USERNAME/fin-intel-pipeline.git)
-cd fin-intel-pipeline
-
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
+## 📂 Project Structure
+```text
+fin-signal-intelligence/
+├── src/
+│   ├── ingestion/       # Multi-source scrapers & Pydantic normalization
+│   ├── brain/           # FinBERT Inference & Groq LLM summary logic
+│   ├── api/             # FastAPI with Supavisor connection pooling
+│   └── dashboard/       # Real-time Streamlit visualization
+├── .github/workflows/   # Autonomous Daily Cron Jobs
+├── config/              # Pydantic Settings & Environment management
+├── database/            # SQL Migrations & Schema definitions
+└── tests/               # Pytest suite for signal accuracy validation
