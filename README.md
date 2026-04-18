@@ -1,88 +1,52 @@
-# 📈 Financial Signal Intelligence (FSI)
-### Autonomous MLOps Pipeline | Real-Time Market Sentiment | FinBERT-Powered Analytics
+# 💹 MarketSense: Real-Time Financial Intelligence Engine
+### High-Concurrency MLOps Pipeline | FinBERT Sentiment Analysis | Live WebSocket Alerts
 
-[![Pipeline Status](https://github.com/YOUR_USERNAME/fin-intel-pipeline/actions/workflows/main.yml/badge.svg)](https://github.com/YOUR_USERNAME/fin-intel-pipeline/actions)
-[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/)
-[![Database: Supabase](https://img.shields.io/badge/DB-Supabase%20(Postgres)-green)](https://supabase.com/)
-
-FSI is a production-grade intelligence system designed to handle **100+ concurrent users**. It transforms raw, fragmented financial news into actionable market signals by combining domain-specific NLP with a scalable, event-driven architecture.
+MarketSense is a production-grade data platform that processes live financial news into actionable sentiment signals. Built with a **Cloud-Native Architecture**, this system is engineered to serve low-latency insights to 100+ concurrent users simultaneously.
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ System Design: Built for Scale
+Most portfolio projects use local files (CSV/SQLite) which fail under concurrent load. MarketSense is designed for production reliability:
 
-
-The system follows a **Producer-Consumer** pattern optimized for high-concurrency:
-* **The Producer:** Idempotent ingestion engine fetching data from AlphaVantage and yfinance.
-* **The Brain:** Dual-stage NLP using **FinBERT** for sentiment extraction and **Groq (Llama 3.3 70B)** for narrative reasoning.
-* **The Warehouse:** **PostgreSQL (Supabase)** with **Supavisor connection pooling** to prevent bottlenecks for 100+ users.
-* **The Broadcaster:** Real-time signal delivery via **WebSockets** for zero-latency UI updates.
+* **The Ingestion Engine:** A robust collector pulling from **AlphaVantage** and **yfinance**, utilizing **Pydantic** for strict data-contract enforcement and schema validation.
+* **The Intelligence Layer:** Specialized **FinBERT** (Financial BERT) inference to detect nuanced market tones that generic NLP models often misinterpret.
+* **The High-Concurrency Core:** Built on **PostgreSQL (Supabase)** with **Supavisor** connection pooling. This allows the system to handle 100+ simultaneous user connections without database locks.
+* **The Edge Broadcaster:** Uses **Postgres Change Data Capture (CDC)** to push live sentiment shifts to users via WebSockets as they happen.
 
 ---
 
-## 🌟 Key Engineering Decisions
-
-* **Scalability over Simplicity:** Switched from standard SQLite to **PostgreSQL with Connection Pooling**. This allows the system to handle simultaneous read/write operations from 100+ users without database locks.
-* **FinBERT vs. DistilBERT:** Leverages a model pre-trained on financial corpora. FinBERT correctly identifies "Earnings missed estimates" as *bearish*, whereas general models often misinterpret the context.
-* **MD5 Deduplication:** Implements a hashing logic (Ticker + Headline) to ensure **idempotency**. Re-running the pipeline never creates duplicate records, keeping the "Source of Truth" clean.
-* **Statistical Anomaly Detection:** Uses rolling **Z-score analysis** to filter market noise, triggering alerts only when sentiment shifts are statistically significant (> 2σ).
-* **Graceful Degradation:** The pipeline handles NewsAPI rate limits (426 handling) and Reddit JSON fallbacks autonomously without crashing the main thread.
+## 🛠️ The Engineering Stack
+| Component       | Technology           | Why? |
+| :-------------- | :------------------- | :--- |
+| **Language** | Python 3.12          | Standard for AI/Data Engineering. |
+| **Orchestration**| Prefect 3.0          | Provides observability and auto-retries for scraping tasks. |
+| **NLP Model** | FinBERT              | Specialized for financial context (bearish/bullish detection). |
+| **Database** | Supabase (Postgres)  | Cloud-scale relational storage with real-time capabilities. |
+| **Scaling** | Supavisor            | Connection pooling to support 100+ concurrent sessions. |
+| **API** | FastAPI              | High-performance asynchronous framework for data serving. |
 
 ---
 
 ## 📂 Project Structure
 ```text
-fin-signal-intelligence/
+fin-intel-engine/
 ├── src/
-│   ├── ingestion/       # Multi-source scrapers & Pydantic normalization
-│   ├── brain/           # FinBERT Inference & Groq LLM summary logic
-│   ├── api/             # FastAPI with Supavisor connection pooling
-│   └── dashboard/       # Real-time Streamlit visualization
-├── .github/workflows/   # Autonomous Daily Cron Jobs
-├── config/              # Pydantic Settings & Environment management
-├── database/            # SQL Migrations & Schema definitions
-└── tests/               # Pytest suite for signal accuracy validation
+│   ├── ingestion/    # Live news collectors & schema validation
+│   ├── brain/        # FinBERT scoring & LLM signal reasoning
+│   ├── api/          # FastAPI server with connection pooling
+│   └── dashboard/    # Real-time WebSocket-enabled UI
+├── .github/workflows/ # Automation & CI/CD
+├── database/         # Migrations & indexing strategies for 100+ users
+└── config/           # Pydantic settings & API management
 ```
 
 ---
 
-## 📊 Metrics & Performance
-* **Ingestion Yield:** 98% (Post-normalization)
-* **Signal Latency:** < 2s from raw news to database entry
-* **Deduplication Efficiency:** 100% (Tested with 1,000+ duplicate items)
-* **Concurrency Support:** Designed for 100+ users via WebSocket broadcasting
-
----
-
-## 🛠️ Tech Stack
-**Python** • **FinBERT** • **Groq (Llama 3.3)** • **Supabase (Postgres)** • **FastAPI** • **Prefect** • **GitHub Actions** • **Pydantic** • **Streamlit**
-
----
-
-## 🚀 Quickstart
-
-1. **Clone & Install**
-   ```bash
-   git clone [https://github.com/YOUR_USERNAME/fin-intel-pipeline.git](https://github.com/YOUR_USERNAME/fin-intel-pipeline.git)
-   cd fin-intel-pipeline
-   python -m venv .venv
-   source .venv/bin/activate
-   pip install -r requirements.txt
-   ```
-
-2. **Environment Configuration**
-   Create a `.env` file:
-   ```text
-   SUPABASE_URL=your_url
-   SUPABASE_KEY=your_key
-   ALPHA_VANTAGE_KEY=your_key
-   GROQ_API_KEY=your_key
-   ```
-
-3. **Run Pipeline**
-   ```bash
-   python src/main.py
-   ```
+## 🚀 Vision & Roadmap
+MarketSense is a foundation for automated trading signals and sentiment monitoring.
+- [ ] **Phase 1:** End-to-end ingestion and FinBERT scoring.
+- [ ] **Phase 2:** WebSocket implementation for live 100+ user broadcasting.
+- [ ] **Phase 3:** RAG-based search for querying historical news trends.
 
 ---
 
@@ -90,4 +54,3 @@ fin-signal-intelligence/
 Distributed under the MIT License.
 
 **Built by Aditya Shashank Chinta** | [LinkedIn](https://www.linkedin.com/in/aditya-shashank/)
-```
