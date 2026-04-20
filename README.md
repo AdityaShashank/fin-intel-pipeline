@@ -49,6 +49,11 @@ MarketSense is a foundation for automated trading signals and sentiment monitori
 - [ ] **Phase 3:** RAG-based search for querying historical news trends.
 
 ---
+##  System Architecture so far
+
+<img width="8191" height="707" alt="Data Ingestion and-2026-04-20-174006" src="https://github.com/user-attachments/assets/dade69aa-40fe-44f2-b2cb-2176ec346220" />
+
+
 
 ## ⚖️ License
 Distributed under the MIT License.
