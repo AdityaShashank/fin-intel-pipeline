@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from supabase import create_client
 from src.schemas import FinanceSignal
 from src.preflight import run_preflight_checks
+from src.brain import SentimentBrain
 
 load_dotenv()  # Loads .env keys
 
@@ -20,6 +21,8 @@ def _get_runtime_config():
     return create_client(supabase_url, supabase_key), av_key
 
 def ingest_news(ticker="NVDA"):
+    #initializing the Brain
+    brain= SentimentBrain()
     print(f"--- 🛰️ Fetching {ticker} Signals ---")
     supabase, av_key = _get_runtime_config()
     
@@ -30,25 +33,29 @@ def ingest_news(ticker="NVDA"):
 
     for item in feed:
         try:
-            # 2. Validate using our Pydantic 'Contract'
-            # We map Alpha Vantage fields to our schema fields
+            # 3. ASK THE BRAIN (The "Intelligence" Step)
+            analysis = brain.get_sentiment(item['title'])
+            
+            # 4. Map to Schema
             signal = FinanceSignal(
                 ticker=ticker,
                 headline=item['title'],
                 url=item['url'],
-                published_at=item['time_published'] 
+                published_at=item['time_published'],
+                sentiment_score=analysis['score'], # <--- AI Score
+                sentiment_label=analysis['label']   # <--- AI Label
             )
 
-            # 3. Push to Supabase
-            # .dict() converts the Pydantic object back to a format SQL understands
-            # mode="json" is the "magic" that converts HttpUrl to a string 
-            # and Datetime to an ISO string that Supabase understands.
-            supabase.table("financial_signals").insert(signal.model_dump(mode="json")).execute()
-            print(f"✅ Saved: {signal.headline[:50]}...")
+            # 5. Push to Supabase
+            supabase.table("financial_signals").upsert(
+                signal.model_dump(mode="json"), 
+                on_conflict="url"
+            ).execute()
+            
+            print(f"✅ {signal.sentiment_label}: {signal.headline[:50]}...")
 
         except Exception as e:
-            # This handles both Validation errors and Database 'Unique' constraint errors
-            print(f"⚠️ Skipped article: {e}")
+            print(f"⚠️ Skipped: {e}")
 
 if __name__ == "__main__":
     run_preflight_checks()
