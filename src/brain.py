@@ -44,5 +44,5 @@ class SentimentBrain:
 if __name__ == "__main__":
     # Quick Test
     brain = SentimentBrain()
-    test_headline = "NVIDIA revenue beats expectations as AI demand surges"
+    test_headline = "Oracle revenue beats expectations as AI demand surges"
     print(f"Result: {brain.get_sentiment(test_headline)}")
