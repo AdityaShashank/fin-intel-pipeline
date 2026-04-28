@@ -7,8 +7,6 @@ class FinanceSignal(BaseModel):  # Make sure this name matches what you use in c
     headline: str
     url: HttpUrl
     published_at: datetime
-    
-    # ⬇️ ADD THESE TWO LINES ⬇️
     sentiment_score: Optional[float] = None
     sentiment_label: Optional[str] = None 
 
